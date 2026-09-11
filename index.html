@@ -3,364 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ئەپڵیکەیشنی کتێبەکانی قوتابیان</title>
+    <title>پەخشکردنی ڤیدیۆی Mega</title>
     <style>
-        /* CSS Styling - Dark & Colorful UI */
-        :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --accent-purple: #8b5cf6;
-            --accent-blue: #06b6d4;
-            --accent-pink: #ec4899;
-            --text-color: #f8fafc;
-            --text-muted: #94a3b8;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background-color: #0f172a;
+            color: #fff;
+            font-family: system-ui, -apple-system, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             min-height: 100vh;
-            padding-bottom: 30px;
+            padding: 20px;
         }
 
-        /* Splash Screen (لۆگۆی دەستپێک) */
-        #splash-screen {
-            position: fixed;
+        h1 {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            color: #38bdf8;
+        }
+
+        .player-card {
+            width: 100%;
+            max-width: 800px;
+            background: #1e293b;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid #334155;
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            background-color: #000;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: var(--bg-color);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.8s ease, visibility 0.8s;
+            border: 0;
         }
 
-        #splash-screen img {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            box-shadow: 0 0 30px rgba(139, 92, 246, 0.6);
-            animation: zoomIn 1s ease-in-out infinite alternate;
-            object-fit: cover;
-        }
-
-        #splash-screen h2 {
-            margin-top: 20px;
-            background: linear-gradient(45deg, var(--accent-blue), var(--accent-pink));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-size: 1.5rem;
-        }
-
-        @keyframes zoomIn {
-            0% { transform: scale(0.95); }
-            100% { transform: scale(1.05); }
-        }
-
-        /* Main Header */
-        header {
-            background: linear-gradient(135deg, #1e1b4b, #311042);
-            padding: 20px;
-            text-align: center;
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-        }
-
-        header h1 {
-            font-size: 1.8rem;
-            background: linear-gradient(to right, var(--accent-blue), var(--accent-purple), var(--accent-pink));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 15px;
-        }
-
-        /* Search Box */
-        .search-box {
-            position: relative;
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 12px 20px;
-            border-radius: 25px;
-            border: 2px solid var(--accent-purple);
-            background-color: var(--card-bg);
-            color: #fff;
-            font-size: 1rem;
-            outline: none;
-            transition: 0.3s;
-        }
-
-        .search-box input:focus {
-            border-color: var(--accent-pink);
-            box-shadow: 0 0 10px rgba(236, 72, 153, 0.5);
-        }
-
-        /* Container Layout */
-        .container {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 0 15px;
-        }
-
-        .section-title {
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-            color: var(--accent-blue);
-            border-right: 4px solid var(--accent-pink);
-            padding-right: 8px;
-        }
-
-        /* Class Buttons Grid */
-        .class-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 25px;
-        }
-
-        .class-btn {
-            padding: 12px 5px;
-            background: linear-gradient(145deg, #2a334c, #1a2236);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: var(--text-color);
-            border-radius: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-            text-align: center;
-        }
-
-        .class-btn:hover, .class-btn.active {
-            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.4);
-        }
-
-        /* Books List */
-        .books-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .book-card {
-            background-color: var(--card-bg);
+        .actions {
             padding: 15px;
-            border-radius: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-right: 4px solid var(--accent-purple);
-            transition: 0.3s;
+            background: #0f172a;
         }
 
-        .book-card:hover {
-            transform: translateX(-5px);
-            border-right-color: var(--accent-pink);
-        }
-
-        .book-info h4 {
-            font-size: 1.1rem;
-            color: var(--text-color);
-            word-break: break-word;
-        }
-
-        .book-info span {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        .download-btn {
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+        .btn {
+            background: #0284c7;
             color: white;
             padding: 8px 16px;
+            border-radius: 8px;
             text-decoration: none;
-            border-radius: 20px;
-            font-size: 0.85rem;
             font-weight: bold;
+            font-size: 0.9rem;
             transition: 0.3s;
-            white-space: nowrap;
-            margin-right: 10px;
         }
 
-        .download-btn:hover {
-            opacity: 0.9;
-            box-shadow: 0 0 8px var(--accent-blue);
-        }
-
-        .loading, .no-results {
-            text-align: center;
-            padding: 20px;
-            color: var(--text-muted);
-        }
+        .btn:hover { background: #0369a1; }
     </style>
 </head>
 <body>
 
-    <!-- Splash Screen (دەستپێک بە لۆگۆی گەورە) -->
-    <div id="splash-screen">
-        <img src="https://raw.githubusercontent.com/kakfaro/bangakan/main/IMG_9917.jpeg" alt="Logo">
-        <h2>بەخێربێن بۆ ئەپڵیکەیشنی کتێبەکان</h2>
-    </div>
+    <h1>پەخشکەری ڤیدیۆ (Mega.nz)</h1>
 
-    <!-- Application Header -->
-    <header>
-        <h1>پەرتووکخانەی قوتابیان</h1>
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="گەڕان بەدوای کتێب..." onkeyup="filterBooks()">
+    <div class="player-card">
+        <div class="video-wrapper">
+            <!-- بەکارهێنانی پروکسی embed بۆ لێدانی فایلی mega -->
+            <iframe 
+                src="https://mega.nz/embed/oUlQHArQ#PQecYQm2JN0fTgjVeeO81gZsg21H65mbN_43QBk1RIE" 
+                allowfullscreen 
+                allow="autoplay; encrypted-media">
+            </iframe>
         </div>
-    </header>
-
-    <div class="container">
-        <!-- Class Selector Grid -->
-        <h3 class="section-title">پۆلەکان (١ - ١٢)</h3>
-        <div class="class-grid" id="classGrid">
-            <!-- JavaScript Button Generation -->
-        </div>
-
-        <!-- Dynamic Books List -->
-        <h3 class="section-title" id="currentClassTitle">هەموو کتێبەکان</h3>
-        <div class="books-list" id="booksContainer">
-            <div class="loading">تکایە چاوەڕێ بکە... کتێبەکان بار دەکرێن</div>
+        <div class="actions">
+            <span>ڤیدیۆی هەڵبژێردراو</span>
+            <a href="https://mega.nz/file/oUlQHArQ#PQecYQm2JN0fTgjVeeO81gZsg21H65mbN_43QBk1RIE" target="_blank" class="btn">کردنەوە لە Mega</a>
         </div>
     </div>
 
-    <!-- Application Logic (JavaScript) -->
-    <script>
-        // GitHub Repository Configurations
-        const GITHUB_USERNAME = 'kakfaro';
-        const REPO_NAME = 'bangakan';
-        const FOLDER_PATH = 'ktebakan';
-        const API_URL = `https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAME}/contents/${FOLDER_PATH}`;
-
-        // لیستی کتێبە دەرەکییەکان یان قەبارە گەورەکان (لە ڕێگەی بەستەری ڕاستەوخۆوە)
-        const externalBooks = [
-            {
-                name: "کتێبی تایبەت (U.O.U)",
-                class: 12, // دەتوانیت ژمارەی پۆلەکە لێرە دیاری بکەیت
-                downloadUrl: "https://github.com/user-attachments/files/32133714/U.O.U.O.U._U.U.O.U.U.O.O.U.U._U.U.O.O.O.U._O.U.O.O.U.U.pdf"
-            }
-        ];
-
-        let allBooks = [];
-        let selectedClass = 'all';
-
-        // Hide Splash Screen after 2.5 seconds
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                const splash = document.getElementById('splash-screen');
-                splash.style.opacity = '0';
-                splash.style.visibility = 'hidden';
-            }, 2500);
-            
-            initClassButtons();
-            fetchBooksFromGitHub();
-        });
-
-        // Initialize Class Selector Buttons (1 to 12)
-        function initClassButtons() {
-            const classGrid = document.getElementById('classGrid');
-            let buttonsHTML = `<button class="class-btn active" onclick="selectClass('all', this)">هەمووی</button>`;
-            
-            for (let i = 1; i <= 12; i++) {
-                buttonsHTML += `<button class="class-btn" onclick="selectClass(${i}, this)">پۆلی ${i}</button>`;
-            }
-            classGrid.innerHTML = buttonsHTML;
-        }
-
-        // Fetch Books dynamically from GitHub Repository + External Links
-        async function fetchBooksFromGitHub() {
-            const booksContainer = document.getElementById('booksContainer');
-            let githubBooks = [];
-
-            try {
-                const response = await fetch(API_URL);
-                if (response.ok) {
-                    const files = await response.json();
-                    githubBooks = files.map(file => ({
-                        name: cleanFileName(file.name),
-                        downloadUrl: file.download_url,
-                        class: detectClassFromName(file.name)
-                    }));
-                }
-            } catch (error) {
-                console.log('هیچ کتێبێک لە فۆڵدەرەکە نەدۆزرایەوە یان کێشەی هێڵ هەیە');
-            }
-
-            // Merge both arrays (External links + Auto-fetched files)
-            allBooks = [...externalBooks, ...githubBooks];
-            renderBooks();
-        }
-
-        // Detect class number automatically from file name
-        function detectClassFromName(filename) {
-            const match = filename.match(/\d+/);
-            return match ? parseInt(match[0]) : 'گشتی';
-        }
-
-        // Clean file name extensions and formatting
-        function cleanFileName(filename) {
-            return filename.replace(/\.[^/.]+$/, "").replace(/_/g, " ");
-        }
-
-        // Render books based on selected class filter and live search
-        function renderBooks() {
-            const booksContainer = document.getElementById('booksContainer');
-            const searchInput = document.getElementById('searchInput').value.toLowerCase();
-
-            const filteredBooks = allBooks.filter(book => {
-                const matchesClass = (selectedClass === 'all') || (book.class == selectedClass);
-                const matchesSearch = book.name.toLowerCase().includes(searchInput);
-                return matchesClass && matchesSearch;
-            });
-
-            if (filteredBooks.length === 0) {
-                booksContainer.innerHTML = `<div class="no-results">هیچ کتێبێک نەدۆزرایەوە.</div>`;
-                return;
-            }
-
-            booksContainer.innerHTML = filteredBooks.map(book => `
-                <div class="book-card">
-                    <div class="book-info">
-                        <h4>${book.name}</h4>
-                        <span>${typeof book.class === 'number' ? 'پۆلی ' + book.class : 'گشتی'}</span>
-                    </div>
-                    <a href="${book.downloadUrl}" target="_blank" rel="noopener noreferrer" class="download-btn">داگرتن / بینین</a>
-                </div>
-            `).join('');
-        }
-
-        // Filter books by class click
-        function selectClass(classNum, btnElement) {
-            selectedClass = classNum;
-            document.querySelectorAll('.class-btn').forEach(b => b.classList.remove('active'));
-            btnElement.classList.add('active');
-            
-            document.getElementById('currentClassTitle').innerText = 
-                classNum === 'all' ? 'هەموو کتێبەکان' : `کتێبەکانی پۆلی ${classNum}`;
-            
-            renderBooks();
-        }
-
-        // Filter books on live typing search
-        function filterBooks() {
-            renderBooks();
-        }
-    </script>
 </body>
 </html>
