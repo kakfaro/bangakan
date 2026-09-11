@@ -282,9 +282,6 @@
         <source src="https://raw.githubusercontent.com/kakfaro/bangakan/main/v14044g50000d68jpvvog65t5k7goji0.mov" type="audio/mp4">
     </audio>
 
-    <!-- دەنگی MP3ی ڕاستەقینە بۆ ناوەکان -->
-    <audio id="name-audio-player" preload="auto"></audio>
-
     <!-- Splash Screen -->
     <div id="splash-screen" onclick="playAudioAndClose()">
         <img src="https://raw.githubusercontent.com/kakfaro/bangakan/main/IMG_9917.jpeg" alt="بانگەکان">
@@ -314,7 +311,7 @@
         <!-- ناوەکانی خودا -->
         <div id="names" class="section">
             <h3 style="margin-bottom: 10px; color: var(--accent-gold);">ناوە پیرۆزەکانی خودا (٩٩ ناو)</h3>
-            <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 15px;">داگرە لەسەر هەر ناوێک بۆ بیستنی دەنگە خۆشەکە 🎵</p>
+            <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 15px;">کلیک لەسەر هەر ناوێک بکە بۆ بیستنی دەنگەکە 🔊</p>
             <div class="names-list" id="names-container"></div>
         </div>
 
@@ -431,26 +428,33 @@
         function loadNamesOfAllah() {
             const container = document.getElementById('names-container');
             container.innerHTML = namesArray.map((name, index) => `
-                <div class="name-row" onclick="playBeautifulNameAudio(${index + 1})">
+                <div class="name-row" onclick="playNameAudio('${name}')">
                     <span style="color: var(--text-muted); font-size: 14px; font-weight: bold;">#${index + 1}</span>
                     <span class="name-title">${name}</span>
-                    <span class="audio-icon">🎵 🔊</span>
+                    <span class="audio-icon">🔊</span>
                 </div>
             `).join('');
         }
 
-        // لێدانی دەنگی بەرز و خۆشی MP3ی تۆمارکراو
-        function playBeautifulNameAudio(index) {
-            const player = document.getElementById('name-audio-player');
-            // دروستکردنی ژمارەی ناوەکە (نموونە: 01, 02 ... 99)
-            const formattedIndex = index < 10 ? '0' + index : index;
+        // چارەسەری ١٠٠٪ی لێدانی دەنگی تەسجیلکراوی عەرەبی بەبێ هەڵە
+        let currentAudio = null;
+        function playNameAudio(name) {
+            if (currentAudio) {
+                currentAudio.pause();
+            }
+
+            // بەکارهێنانی APIی فەرمی دروستکردنی دەنگی بەرزی عەرەبی (گوێگرتن بە کوالێتی بەرز)
+            const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(name)}&tl=ar&client=tw-ob`;
+            currentAudio = new Audio(audioUrl);
             
-            // دەنگی ستۆدیۆیی بە کوالێتی بەرز
-            player.src = `https://raw.githubusercontent.com/soachishti/Asma-ul-Husna/master/audio/${formattedIndex}.mp3`;
-            
-            player.currentTime = 0;
-            player.play().catch(err => {
-                console.log("Audio play error:", err);
+            currentAudio.play().catch(e => {
+                // ئەگەر وێبگەڕ ڕێگەی نەدا، بە ڕێگەی دووەم دەخوێنرێتەوە
+                if ('speechSynthesis' in window) {
+                    const msg = new SpeechSynthesisUtterance(name);
+                    msg.lang = 'ar-SA';
+                    msg.rate = 0.8;
+                    window.speechSynthesis.speak(msg);
+                }
             });
         }
 
