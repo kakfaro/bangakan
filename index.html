@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ئەپڵیکەیژنی بانگەکان</title>
+    <style>
+        /* --- CSS styles & Dark Mode --- */
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --accent-green: #2ea043;
+            --accent-gold: #d4af37;
+            --accent-purple: #8a2be2;
+            --text-color: #f0f6fc;
+            --text-muted: #8b949e;
+            --border-color: #30363d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding-bottom: 70px;
+            overflow-x: hidden;
+        }
+
+        /* Splash Screen */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
+
+        #splash-screen img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 3px solid var(--accent-gold);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+            animation: pulse 2s infinite;
+        }
+
+        #splash-screen h1 {
+            margin-top: 20px;
+            color: var(--accent-gold);
+            font-size: 24px;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #1f2937, #111827);
+            padding: 15px;
+            text-align: center;
+            border-bottom: 2px solid var(--accent-gold);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h2 {
+            color: var(--accent-gold);
+            font-size: 20px;
+        }
+
+        /* Bottom Navigation Bar */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: var(--card-bg);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid var(--border-color);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .nav-item.active {
+            color: var(--accent-gold);
+            font-weight: bold;
+        }
+
+        .nav-item span {
+            font-size: 18px;
+            margin-bottom: 3px;
+        }
+
+        /* Main Container & Sections */
+        .container {
+            padding: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards Style */
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        /* Names of Allah Grid */
+        .names-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+        }
+
+        .name-card {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border: 1px solid var(--accent-gold);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            color: var(--accent-gold);
+            font-weight: bold;
+        }
+
+        /* Prayer Times UI */
+        .prayer-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .prayer-row:last-child {
+            border-bottom: none;
+        }
+
+        .time {
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+
+        .btn-notif {
+            background-color: var(--accent-purple);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        /* Quran Section */
+        .surah-list {
+            list-style: none;
+        }
+
+        .surah-item {
+            padding: 12px;
+            background: var(--card-bg);
+            margin-bottom: 8px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            cursor: pointer;
+            border-right: 4px solid var(--accent-green);
+        }
+
+        /* Dhikr Section */
+        .dhikr-card {
+            background: linear-gradient(135deg, #111827, #1f2937);
+            border-right: 4px solid var(--accent-gold);
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .dhikr-count {
+            display: inline-block;
+            margin-top: 10px;
+            background: var(--accent-gold);
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- دەنگی سەرتایی (Intro Audio) -->
+    <audio id="intro-audio" src="https://raw.githubusercontent.com/kakfaro/bangakan/main/v14044g50000d68jpvvog65t5k7goji0.mov"></audio>
+
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <img src="https://raw.githubusercontent.com/kakfaro/bangakan/main/IMG_9917.jpeg" alt="بانگەکان">
+        <h1>بەخێربێن بۆ ئەپی بانگەکان</h1>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <h2>بە بەرنامەی بانگەکان</h2>
+    </header>
+
+    <!-- Main Content Containers -->
+    <div class="container">
+
+        <!-- 1. کاتی بانگەکان -->
+        <div id="prayers" class="section active">
+            <div class="card">
+                <h3 style="color: var(--accent-gold); margin-bottom: 15px;">کاتی بانگەکانی ئەمڕۆ</h3>
+                <div class="prayer-row">
+                    <span>بانگی بەیانی</span>
+                    <span class="time" id="fajr-time">04:30 AM</span>
+                </div>
+                <div class="prayer-row">
+                    <span>کاتی کەلەپش (نیوەڕۆ)</span>
+                    <span class="time" id="dhuhr-time">12:15 PM</span>
+                </div>
+                <div class="prayer-row">
+                    <span>بانگی عەسر</span>
+                    <span class="time" id="asr-time">03:45 PM</span>
+                </div>
+                <div class="prayer-row">
+                    <span>بانگی ئێوارە</span>
+                    <span class="time" id="maghrib-time">06:30 PM</span>
+                </div>
+                <div class="prayer-row">
+                    <span>بانگی عیشا</span>
+                    <span class="time" id="isha-time">08:00 PM</span>
+                </div>
+            </div>
+            <button class="btn-notif" style="width: 100%; padding: 12px; font-size: 14px;" onclick="requestNotification()">چالاککردنی ئاگادارکردنەوەی بانگ 🔔</button>
+        </div>
+
+        <!-- 2. ناوەکانی خودا -->
+        <div id="names" class="section">
+            <h3 style="margin-bottom: 15px; color: var(--accent-gold);">ناوە پیرۆزەکانی خودا (٩٩ ناو)</h3>
+            <div class="names-grid" id="names-container">
+                <!-- جاڤاسکریپت پڕی دەکاتەوە -->
+            </div>
+        </div>
+
+        <!-- 3. قورئانی پیرۆز -->
+        <div id="quran" class="section">
+            <h3 style="margin-bottom: 15px; color: var(--accent-green);">سوورەتەکانی قورئانی پیرۆز</h3>
+            <ul class="surah-list" id="surah-list">
+                <!-- لیستی سوورەتەکان بە API باردەکرێن -->
+            </ul>
+        </div>
+
+        <!-- 4. زیکرەکان -->
+        <div id="dhikr" class="section">
+            <h3 style="margin-bottom: 15px; color: var(--accent-gold);">زیکرە گرنگەکان</h3>
+            <div class="dhikr-card">
+                <p>«سُبْحَانَ اللَّهِ وَبِحَمْدِهِ ، سُبْحَانَ اللَّهِ الْعَظِيمِ»</p>
+                <span class="dhikr-count">سەرفرازبوون لە دووڕیانەکان</span>
+            </div>
+            <div class="dhikr-card">
+                <p>«أَسْتَغْفِرُ اللَّهَ الَّذِي لاَ إِلَهَ إِلاَّ هُوَ الْحَيُّ الْقَيُّومُ وَأَتُوبُ إِلَيْهِ»</p>
+                <span class="dhikr-count">داوای لێخۆشبوون</span>
+            </div>
+            <div class="dhikr-card">
+                <p>«لاَ إِلَهَ إِلاَّ أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ»</p>
+                <span class="dhikr-count">زیکری حەزرەتی یوونس (ع.س)</span>
+            </div>
+            <div class="dhikr-card">
+                <p>«اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ»</p>
+                <span class="dhikr-count">سڵاواتدان لەسەر پێغەمبەر</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Navigation Bar -->
+    <div class="nav-bar">
+        <div class="nav-item active" onclick="switchTab('prayers', this)">
+            <span>🕌</span>
+            <span>بانگەکان</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('names', this)">
+            <span>✨</span>
+            <span>ناوەکانی خودا</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('quran', this)">
+            <span>📖</span>
+            <span>قورئان</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('dhikr', this)">
+            <span>📿</span>
+            <span>زیکرەکان</span>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- Splash Screen & Audio Logic ---
+        window.addEventListener('DOMContentLoaded', () => {
+            const splash = document.getElementById('splash-screen');
+            const audio = document.getElementById('intro-audio');
+
+            // لێدانی دەنگەکە (لە هەندێک وێبگەڕ پێویستی بە کلیکە، بەڵام هەوڵی لێدانی خۆکارانە دەدات)
+            audio.play().catch(error => {
+                console.log("Autoplay was prevented by browser.");
+            });
+
+            // لابردنی سپلاش سکرین دوای ٣ چەرکە
+            setTimeout(() => {
+                splash.style.opacity = '0';
+                splash.style.visibility = 'hidden';
+            }, 3000);
+
+            loadNamesOfAllah();
+            loadQuranSurahs();
+        });
+
+        // --- Navigation Tab Switcher ---
+        function switchTab(sectionId, element) {
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            
+            document.getElementById(sectionId).classList.add('active');
+            element.classList.add('active');
+        }
+
+        // --- Populate 99 Names of Allah ---
+        const namesArray = [
+            "الله", "الرَّحْمَنُ", "الرَّحِيمُ", "الْمَلِكُ", "الْقُدُّوسُ", "السَّلاَمُ", "الْمُؤْمِنُ", "الْمُهَيْمِنُ", "الْعَزِيزُ", "الْجَبَّارُ",
+            "الْمُتَكَبِّرُ", "الْخَالِقُ", "الْبَارِئُ", "الْمُصَوِّرُ", "الْغَفَّارُ", "الْقَهَّارُ", "الْوَهَّابُ", "الرَّزَّاقُ", "الْفَتَّاحُ", "الْعَلِيمُ",
+            "الْقَابِضُ", "الْبَاسِطُ", "الْخَافِضُ", "الرَّافِعُ", "الْمُعِزُّ", "الْمُذِلُّ", "السَّمِيعُ", "الْبَصِيرُ", "الْحَكَمُ", "الْعَدْلُ",
+            "اللَّطِيفُ", "الْخَبِيرُ", "الْحَلِيمُ", "الْعَظِيمُ", "الْغَفُورُ", "الشَّكُورُ", "الْعَلِيُّ", "الْكَبِيرُ", "الْحَفِيظُ", "الْمُقِيتُ",
+            "الْحَسِيبُ", "الْجَلِيلُ", "الْكَرِيمُ", "الرَّقِيبُ", "الْمُجِيبُ", "الْوَاسِعُ", "الْحَكِيمُ", "الْوَدُودُ", "الْمَجِيدُ", "الْبَاعِثُ",
+            "الشَّهِيدُ", "الْحَقُّ", "الْوَكِيلُ", "الْقَوِيُّ", "الْمَتِينُ", "الْوَلِيُّ", "الْحَمِيدُ", "الْمُحْصِي", "الْمُبْدِئُ", "الْمُعِيدُ",
+            "الْمُحْيِي", "الْمُمِيتُ", "الْحَيُّ", "الْقَيُّومُ", "الْوَاجِدُ", "الْمَاجِدُ", "الْوَاحِدُ", "الصَّمَدُ", "الْقَادِرُ", "الْمُقْتَدِرُ",
+            "الْمُقَدِّمُ", "الْمُؤَخِّرُ", "الأَوَّلُ", "الآخِرُ", "الظَّاهِرُ", "الْبَاطِنُ", "الْوَالِي", "الْمُتَعَالِي", "الْبَرُّ", "التَّوَّابُ",
+            "الْمُنْتَقِمُ", "الْعَفُوُّ", "الرَّؤُوفُ", "مَالِكُ الْمُلْكِ", "ذُو الْجَلاَلِ وَالإِكْرَامِ", "الْمُقْسِطُ", "الْجَامِعُ", "الْغَنِيُّ", "الْمُغْنِي", "الْمَانِعُ",
+            "الضَّارُّ", "النَّافِعُ", "النُّورُ", "الْهَادِي", "الْبَدِيعُ", "الْبَاقِي", "الْوَارِثُ", "الرَّشِيدُ", "الصَّبُورُ"
+        ];
+
+        function loadNamesOfAllah() {
+            const container = document.getElementById('names-container');
+            container.innerHTML = namesArray.map((name, index) => `
+                <div class="name-card">
+                    <small style="color: var(--text-muted); font-size:10px;">${index + 1}</small><br>
+                    ${name}
+                </div>
+            `).join('');
+        }
+
+        // --- Fetch & Load Quran API ---
+        function loadQuranSurahs() {
+            const listContainer = document.getElementById('surah-list');
+            fetch('https://api.alquran.cloud/v1/surah')
+                .then(response => response.json())
+                .then(data => {
+                    const surahs = data.data;
+                    listContainer.innerHTML = surahs.map(s => `
+                        <li class="surah-item" onclick="alert('دەتوانیت سوورەتی (${s.name}) بخوێنیتەوە')">
+                            <span>${s.number}. ${s.name} (${s.englishName})</span>
+                            <span style="color: var(--accent-gold); font-size: 12px;">آياتها ${s.numberOfAyahs}</span>
+                        </li>
+                    `).join('');
+                })
+                .catch(() => {
+                    listContainer.innerHTML = "<p style='color:red;'>خوێندنەوەی سوورەتەکان سەرکەوتوو نەبوو. هێڵی ئینتەرنێتەکەت بپشکنە.</p>";
+                });
+        }
+
+        // --- Push Notification Setup ---
+        function requestNotification() {
+            if ("Notification" in window) {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        alert("ئاگادارکردنەوەکان چاڵاککران! کاتی بانگ ئاگادارت دەکەینەوە.");
+                        // بە نموونە ئاگادارییەک دەنێرین:
+                        new Notification("بانگەکان", {
+                            body: "سیستەمی ئاگادارکردنەوەی بانگەکان بە سەرکەوتوویی چالاککرا.",
+                            icon: "https://raw.githubusercontent.com/kakfaro/bangakan/main/IMG_9917.jpeg"
+                        });
+                    } else {
+                        alert("ڕێگەدان بە ئاگادارکردنەوە ڕەتکرایەوە.");
+                    }
+                });
+            } else {
+                alert("ئەم وێبگەڕەی تۆ پشتیوانی لە ئاگادارکردنەوە ناکات.");
+            }
+        }
+    </script>
+</body>
+</html>
