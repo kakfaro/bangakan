@@ -31,7 +31,7 @@
             overflow-x: hidden;
         }
 
-        /* Splash Screen - لۆگۆی گەورەکراو */
+        /* Splash Screen - لۆگۆی گەورە 220px */
         #splash-screen {
             position: fixed;
             top: 0;
@@ -49,7 +49,7 @@
         }
 
         #splash-screen img {
-            width: 220px; /* لۆگۆکە گەورەتر کراوە */
+            width: 220px;
             height: 220px;
             border-radius: 50%;
             border: 4px solid var(--accent-gold);
@@ -282,7 +282,7 @@
         <source src="https://raw.githubusercontent.com/kakfaro/bangakan/main/v14044g50000d68jpvvog65t5k7goji0.mov" type="audio/mp4">
     </audio>
 
-    <!-- دەنگی شێخ/قاری بۆ خوێندنەوەی ناوەکان -->
+    <!-- دەنگی MP3ی ڕاستەقینە بۆ ناوەکان -->
     <audio id="name-audio-player" preload="auto"></audio>
 
     <!-- Splash Screen -->
@@ -314,7 +314,7 @@
         <!-- ناوەکانی خودا -->
         <div id="names" class="section">
             <h3 style="margin-bottom: 10px; color: var(--accent-gold);">ناوە پیرۆزەکانی خودا (٩٩ ناو)</h3>
-            <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 15px;">کلیک لەسەر هەر ناوێک بکە بۆ بیستنی دەنگی شێخ/مەلا 🔊</p>
+            <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 15px;">داگرە لەسەر هەر ناوێک بۆ بیستنی دەنگە خۆشەکە 🎵</p>
             <div class="names-list" id="names-container"></div>
         </div>
 
@@ -431,23 +431,26 @@
         function loadNamesOfAllah() {
             const container = document.getElementById('names-container');
             container.innerHTML = namesArray.map((name, index) => `
-                <div class="name-row" onclick="playSheikhAudio(${index + 1})">
+                <div class="name-row" onclick="playBeautifulNameAudio(${index + 1})">
                     <span style="color: var(--text-muted); font-size: 14px; font-weight: bold;">#${index + 1}</span>
                     <span class="name-title">${name}</span>
-                    <span class="audio-icon">🕌 🔊</span>
+                    <span class="audio-icon">🎵 🔊</span>
                 </div>
             `).join('');
         }
 
-        // لێدانی دەنگی MP3ی شێخ/مەلا بۆ ناوەکان
-        function playSheikhAudio(index) {
+        // لێدانی دەنگی بەرز و خۆشی MP3ی تۆمارکراو
+        function playBeautifulNameAudio(index) {
             const player = document.getElementById('name-audio-player');
-            // ژمارەی ناوەکە دەکاتە دوو ڕەقەم (نموونە: 01, 02 ... 99)
+            // دروستکردنی ژمارەی ناوەکە (نموونە: 01, 02 ... 99)
             const formattedIndex = index < 10 ? '0' + index : index;
-            // بەستەری MP3ی دەنگی ڕاستەقینەی شێخ بۆ خوێندنەوەی ناوەکان
+            
+            // دەنگی ستۆدیۆیی بە کوالێتی بەرز
             player.src = `https://raw.githubusercontent.com/soachishti/Asma-ul-Husna/master/audio/${formattedIndex}.mp3`;
+            
+            player.currentTime = 0;
             player.play().catch(err => {
-                console.log("Audio playback error:", err);
+                console.log("Audio play error:", err);
             });
         }
 
